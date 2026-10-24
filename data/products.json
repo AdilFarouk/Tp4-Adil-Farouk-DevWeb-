@@ -6,6 +6,6 @@
     {"id":14, "name":"haut-parleur", "category":"Audio", "price":700, "stock":10},
     {"id":15, "name":"Cahier", "category":"Papeterie", "price":20, "stock":200},
     {"id":16, "name":"Stylo", "category":"Papeterie", "price":7, "stock":400},
-    {"id":17, "name":"Sac a dos", "category":"Accessoires", "price":480, "stock":30},
+    {"id":17, "name":"Sac a dos", "category":"Accessoires", "price":480, "stock":30}
 ]
 
