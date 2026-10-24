@@ -1,5 +1,5 @@
-import { findCustomer, getOrderTotal, getFilteredOrders, getStats } from "./selectors.js";
 
+import { findCustomer, getOrderLines, getOrderTotal, getFilteredOrders, getStats } from "./selectors.js";
 
 export function showError(message) {
   const box = document.getElementById("error");
@@ -24,7 +24,7 @@ function renderStats(state) {
   ];
   document.getElementById("stats").innerHTML = cards.map(card => `
     <div class="col-6 col-md-3">
-      <div class="card shadow-sm text-center">
+      <div class="card stat-card shadow-sm">
         <div class="card-body">
           <div class="text-muted">${card.label}</div>
           <div class="fs-4 fw-bold">${card.value}</div>
@@ -61,4 +61,34 @@ function renderOrders(state) {
 export function render(state) {
   renderStats(state);
   renderOrders(state);
+}
+
+export function showOrderDetail(state, orderId) {
+  const order = state.orders.find(o => o.id === orderId);
+  const customer = findCustomer(state.customers, order.customerId);
+  const lines = getOrderLines(order, state.products);
+  const total = getOrderTotal(order, state.products);
+
+  document.getElementById("detailTitle").textContent = "Commande #" + order.id;
+
+  const rows = lines.map(line => `
+    <tr>
+      <td>${line.name}</td>
+      <td>${line.price} MAD</td>
+      <td>${line.quantity}</td>
+      <td>${line.amount} MAD</td>
+    </tr>`).join("");
+
+  document.getElementById("detailBody").innerHTML = `
+    <p><strong>Client :</strong> ${customer.name}<br>
+       <strong>Ville :</strong> ${customer.city}<br>
+       <strong>Date :</strong> ${order.date}<br>
+       <strong>Statut :</strong> ${order.status}</p>
+    <table class="table">
+      <thead><tr><th>Produit</th><th>Prix</th><th>Quantité</th><th>Montant</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <h5 class="text-end">Total : ${total} MAD</h5>`;
+
+  new bootstrap.Modal(document.getElementById("detailModal")).show();
 }

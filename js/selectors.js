@@ -1,10 +1,13 @@
+
 export function findCustomer(customers, id) {
   return customers.find(c => c.id === id);
 }
 
+
 export function findProduct(products, id) {
   return products.find(p => p.id === id);
 }
+
 
 export function getOrderLines(order, products) {
   return order.items.map(item => {
@@ -14,10 +17,11 @@ export function getOrderLines(order, products) {
       category: product.category,
       price: product.price,
       quantity: item.quantity,
-      amount: product.price * item.quantity
+      amount: product.price * item.quantity   
     };
   });
 }
+
 
 export function getOrderTotal(order, products) {
   let total = 0;
@@ -25,6 +29,28 @@ export function getOrderTotal(order, products) {
     total += line.amount;
   });
   return total;
+}
+
+
+export function getFilteredOrders(state) {
+  return state.orders.filter(order => {
+    const customer = findCustomer(state.customers, order.customerId);
+
+    const matchSearch = customer.name.toLowerCase().includes(state.search.toLowerCase());
+    const matchStatus = state.status === "" || order.status === state.status;
+    const matchCategory = state.category === "" || order.items.some(item => {
+      const product = findProduct(state.products, item.productId);
+      return product.category === state.category;
+    });
+
+    return matchSearch && matchStatus && matchCategory;
+  });
+}
+
+
+export function getCategories(products) {
+  const all = products.map(p => p.category);
+  return all.filter((cat, index) => all.indexOf(cat) === index);
 }
 
 
@@ -39,9 +65,4 @@ export function getStats(state) {
     orders: state.orders.length,
     totalAmount: totalAmount
   };
-}
-
-export function getCategories(products) {
-  const all = products.map(p => p.category);
-  return all.filter((cat, index) => all.indexOf(cat) === index);
 }
